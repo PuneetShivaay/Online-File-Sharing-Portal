@@ -1,0 +1,47 @@
+
+1
+rules_version = '2';
+2
+service cloud.firestore {
+3
+  match /databases/{database}/documents {
+4
+​
+5
+    function getUserData() {
+6
+      return get(/databases/$(database)/documents/User/$(request.auth.uid)).data
+7
+    }
+8
+    
+9
+    match /UploadedFiles/{document} {
+10
+      allow read,write: if getUserData().isVarified
+11
+    }
+12
+    
+13
+     match /DownloadInfo/{document} {
+14
+      allow read,write: if getUserData().isVarified
+15
+    }
+16
+        match /User/{document} {
+17
+      allow write: if request.auth.uid == document
+18
+    }
+19
+     match /{document=**} {
+20
+      allow read,write: if getUserData().Email == "admin@company.com" //write here the email of admin
+21
+    }       
+22
+  }
+23
+}
